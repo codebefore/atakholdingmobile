@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:atakholdingapp/components/base_button.dart';
 import 'package:atakholdingapp/components/base_input.dart';
 import 'package:atakholdingapp/components/base_wrapper.dart';
@@ -5,6 +7,7 @@ import 'package:atakholdingapp/components/spacer.dart';
 import 'package:atakholdingapp/controllers/auth_controller.dart';
 import 'package:atakholdingapp/controllers/loader_controller.dart';
 import 'package:atakholdingapp/router/pages.dart';
+import 'package:atakholdingapp/utility/check_local_auth.dart';
 import 'package:atakholdingapp/utility/enums.dart';
 import 'package:atakholdingapp/utility/size_config.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +32,17 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
+    log("before check");
+    checkbio();
+    log("after check");
+  }
+
+  Future<void> checkbio() async {
+    final hasPermission = await checkBiometrics();
+
+    if (hasPermission) {
+      authenticateUser();
+    }
   }
 
   Future<void> validateAndSave() async {
