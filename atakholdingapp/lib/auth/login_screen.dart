@@ -62,6 +62,9 @@ class _LoginScreenState extends State<LoginScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           // logo,
+          Text(authController.user.firstName ?? "user"),
+          Text(authController.user.lastName ?? "user"),
+          Text(authController.token == "" ? "token" : authController.token),
           emailArea,
           spacer(),
           passwordArea,

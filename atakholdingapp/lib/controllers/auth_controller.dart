@@ -25,6 +25,8 @@ class AuthController extends GetxController {
     _token.value = token;
     if (token != "") {
       storage.write("token", token);
+    } else {
+      storage.remove("token");
     }
   }
 
@@ -36,11 +38,15 @@ class AuthController extends GetxController {
     storage.write("user", b.toJson().toString());
   }
 
+  void deleteUser() {
+    _user.value = UserModel();
+    storage.remove("user");
+  }
+
   //send request login
   Future<bool> login() async {
-    var data = loginModel.toMap();
-    BaseResponseModel response =
-        await NetworkAdaptor.post(Endpoints.login, data);
+    BaseResponseModel response = await NetworkAdaptor.post(
+        '${Endpoints.login}?username=${loginModel.email}&password=${loginModel.password}');
     if (response.success == true) {
       var responsemodel = LoginResponseModel.fromMap(response.data);
       setToken(responsemodel.token ?? "");
@@ -54,17 +60,11 @@ class AuthController extends GetxController {
 
   //send request for logout
   Future<bool> logout() async {
-    var data = loginModel.toMap();
-    BaseResponseModel response =
-        await NetworkAdaptor.post(Endpoints.login, data);
-    if (response.success == true) {
-      var responsemodel = LoginResponseModel.fromMap(response.data);
-      setToken(responsemodel.token ?? "");
-      if (responsemodel.user != null) {
-        setUser(responsemodel.user!);
-      }
-      return true;
-    }
-    return false;
+    // BaseResponseModel response = await NetworkAdaptor.post(Endpoints.login);
+    // if (response.success == true) {
+    //   var responsemodel = LoginResponseModel.fromMap(response.data);
+    setToken("");
+    deleteUser();
+    return true;
   }
 }

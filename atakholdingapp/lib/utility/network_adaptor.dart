@@ -11,7 +11,7 @@ class NetworkAdaptor {
   //#region PRIVATE
   static String _buildUrl(String partUrl) {
     if (partUrl.startsWith('https')) return partUrl;
-    return "https://api.pestomat.com$partUrl";
+    return "http://195.33.210.90:9611$partUrl";
   }
 
   static Dio _getDio({bool withToken = false}) {
@@ -111,18 +111,16 @@ class NetworkAdaptor {
     }
   }
 
-  static Future<BaseResponseModel> post(
-      String partUrl, Map<String, dynamic> data,
+  static Future<BaseResponseModel> post(String partUrl,
       {bool withToken = false}) async {
     try {
       var dio = withToken == true ? _getDioWithToken() : _getDio();
       var url = _buildUrl(partUrl);
 
-      final response = await dio.post(url, data: data);
+      final response = await dio.post(url);
       var result = BaseResponseModel(
           data: null, success: false, message: response.statusMessage);
       if (response.statusCode! < 250) {
-        // result = response.data as BaseResponseModel;
         result = BaseResponseModel.fromMap(response.data);
       }
       return result;
