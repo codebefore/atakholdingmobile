@@ -1,12 +1,13 @@
-import 'package:atakholdingapp/components/base_button.dart';
-import 'package:atakholdingapp/components/base_wrapper.dart';
 import 'package:atakholdingapp/controllers/auth_controller.dart';
+import 'package:atakholdingapp/controllers/home_controller.dart';
 import 'package:atakholdingapp/models/user_model.dart';
-import 'package:atakholdingapp/router/pages.dart';
 import 'package:atakholdingapp/utility/singleton.dart';
+import 'package:atakholdingapp/widgets/home/empty_offers.dart';
+import 'package:atakholdingapp/widgets/home/home_app_bar.dart';
+import 'package:atakholdingapp/widgets/home/home_drawer.dart';
+import 'package:atakholdingapp/widgets/home/offer_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:get_storage/get_storage.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -18,9 +19,10 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String? token = "";
-  UserModel user = new UserModel();
+  UserModel user = UserModel();
   GetStorage storage = getIt.get<GetStorage>();
   final authController = Get.find<AuthController>();
+  final homeController = Get.find<HomeController>();
 
   @override
   void initState() {
@@ -29,26 +31,44 @@ class _HomeScreenState extends State<HomeScreen> {
     user = UserModel.fromJson(storage.read("user"));
     authController.setToken(token ?? "");
     authController.setUser(user);
+
+    homeController.getOffers();
   }
 
   @override
   Widget build(BuildContext context) {
-    final authController = Get.find<AuthController>();
+    return Scaffold(
+      backgroundColor: const Color(0xFFF8F9FA),
+      appBar: const HomeAppBar(),
+      drawer: HomeDrawer(
+        user: user,
+        authController: authController,
+      ),
+      body: Obx(() {
+        final offers = homeController.offerList;
 
-    return BaseWrapper(
-        body: Column(
-      children: [
-        Text(authController.user.firstName ?? ""),
-        Text(authController.user.lastName ?? ""),
-        Text(authController.token),
-        BaseButton(
-          text: "Logout",
-          onTap: () => {
-            authController.logout(),
-            Get.offAllNamed(Pages.login),
+        if (offers.isEmpty) {
+          return const EmptyOffers();
+        }
+
+        return RefreshIndicator(
+          onRefresh: () async {
+            await homeController.getOffers();
           },
-        ),
-      ],
-    ));
+          color: const Color(0xFF2563EB),
+          child: ListView.builder(
+            itemCount: offers.length,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            itemBuilder: (context, index) {
+              final offer = offers[index];
+              return OfferCard(
+                offer: offer,
+                onTap: () {},
+              );
+            },
+          ),
+        );
+      }),
+    );
   }
 }

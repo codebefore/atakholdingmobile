@@ -1,5 +1,6 @@
 class Endpoints {
   static String login = '/login';
+  static String offers = '/offers';
   static String logout = '/v1/authorization/auth/token';
   static String register = '/v1/authorization/auth/register';
   static String refresh = '/v1/authorization/auth/refreshtoken';

@@ -110,8 +110,8 @@ class NetworkAdaptor {
     try {
       var dio = _getDioWithToken();
       var url = _buildUrl(partUrl);
-      final response = await dio.get(url) as BaseResponseModel;
-      return response;
+      final response = await dio.get(url);
+      return BaseResponseModel.fromMap(response.data);
     } catch (error) {
       return BaseResponseModel(success: false, message: "", data: null);
     }
