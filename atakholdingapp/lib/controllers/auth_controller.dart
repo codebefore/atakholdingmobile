@@ -26,7 +26,7 @@ class AuthController extends GetxController {
     if (token != "") {
       storage.write("token", token);
     } else {
-      storage.remove("token");
+      // storage.remove("token");
     }
   }
 
@@ -40,7 +40,7 @@ class AuthController extends GetxController {
 
   void deleteUser() {
     _user.value = UserModel();
-    storage.remove("user");
+    // storage.remove("user");
   }
 
   //send request login

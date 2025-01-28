@@ -2,9 +2,11 @@ import 'dart:io';
 import 'package:atakholdingapp/controllers/auth_controller.dart';
 import 'package:atakholdingapp/endpoints.dart';
 import 'package:atakholdingapp/models/base_response_model.dart';
+import 'package:atakholdingapp/router/pages.dart';
 import 'package:atakholdingapp/utility/singleton.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart' as g;
+import 'package:get/get_core/src/get_main.dart';
 import 'package:get_storage/get_storage.dart';
 
 class NetworkAdaptor {
@@ -36,35 +38,39 @@ class NetworkAdaptor {
 
   static Dio _getDioWithToken() {
     Dio dio = _getDio(withToken: true);
+    GetStorage storage = getIt.get<GetStorage>();
     dio.interceptors
       ..clear()
       ..add(
         QueuedInterceptorsWrapper(
           onError: (error, handler) async {
             if (error.response?.statusCode == HttpStatus.unauthorized) {
-              var options = error.response!.requestOptions;
-              var newToken = await _userRefreshToken();
-              if (newToken.isEmpty) return handler.next(error);
-              options.headers["Authorization"] = "Bearer $newToken";
-              dio.options = BaseOptions(
-                baseUrl: options.baseUrl,
-                contentType: options.contentType,
-                connectTimeout: options.connectTimeout,
-                extra: options.extra,
-                followRedirects: options.followRedirects,
-                headers: options.headers,
-                listFormat: options.listFormat,
-                maxRedirects: options.maxRedirects,
-                method: options.method,
-                queryParameters: options.queryParameters,
-                receiveDataWhenStatusError: options.receiveDataWhenStatusError,
-                receiveTimeout: options.receiveTimeout,
-                requestEncoder: options.requestEncoder,
-                responseDecoder: options.responseDecoder,
-                responseType: options.responseType,
-                sendTimeout: options.sendTimeout,
-                validateStatus: options.validateStatus,
-              );
+              storage.remove("token");
+              storage.remove("user");
+              Get.to(Pages.login);
+              // var options = error.response!.requestOptions;
+              // var newToken = await _userRefreshToken();
+              // if (newToken.isEmpty) return handler.next(error);
+              // options.headers["Authorization"] = "Bearer $newToken";
+              // dio.options = BaseOptions(
+              //   baseUrl: options.baseUrl,
+              //   contentType: options.contentType,
+              //   connectTimeout: options.connectTimeout,
+              //   extra: options.extra,
+              //   followRedirects: options.followRedirects,
+              //   headers: options.headers,
+              //   listFormat: options.listFormat,
+              //   maxRedirects: options.maxRedirects,
+              //   method: options.method,
+              //   queryParameters: options.queryParameters,
+              //   receiveDataWhenStatusError: options.receiveDataWhenStatusError,
+              //   receiveTimeout: options.receiveTimeout,
+              //   requestEncoder: options.requestEncoder,
+              //   responseDecoder: options.responseDecoder,
+              //   responseType: options.responseType,
+              //   sendTimeout: options.sendTimeout,
+              //   validateStatus: options.validateStatus,
+              // );
             }
             return handler.next(error);
           },

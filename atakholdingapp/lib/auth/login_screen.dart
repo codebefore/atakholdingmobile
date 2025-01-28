@@ -1,17 +1,18 @@
-import 'dart:developer';
-
 import 'package:atakholdingapp/components/base_button.dart';
 import 'package:atakholdingapp/components/base_input.dart';
 import 'package:atakholdingapp/components/base_wrapper.dart';
 import 'package:atakholdingapp/components/spacer.dart';
 import 'package:atakholdingapp/controllers/auth_controller.dart';
 import 'package:atakholdingapp/controllers/loader_controller.dart';
+import 'package:atakholdingapp/models/user_model.dart';
 import 'package:atakholdingapp/router/pages.dart';
 import 'package:atakholdingapp/utility/check_local_auth.dart';
 import 'package:atakholdingapp/utility/enums.dart';
+import 'package:atakholdingapp/utility/singleton.dart';
 import 'package:atakholdingapp/utility/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -26,22 +27,35 @@ class _LoginScreenState extends State<LoginScreen> {
   var emailtextcontroller = TextEditingController();
   var passwordtextcontroller = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  GetStorage storage = getIt.get<GetStorage>();
   FocusNode emailFocus = FocusNode();
   FocusNode passwordFocus = FocusNode();
   bool obsecurePassword = true;
+  bool hideLoginElements = false;
+  String? token = "";
+  UserModel user = new UserModel();
   @override
   void initState() {
     super.initState();
-    log("before check");
-    checkbio();
-    log("after check");
+    token = storage.read("token");
+    if (token == null)
+      hideLoginElements = false;
+    else {
+      checkbio();
+      hideLoginElements = true;
+    }
   }
 
   Future<void> checkbio() async {
     final hasPermission = await checkBiometrics();
-
     if (hasPermission) {
-      authenticateUser();
+      final bool authenticated = await authenticateUser();
+      if (authenticated) {
+        user = UserModel.fromJson(storage.read("user"));
+        authController.setToken(token ?? "");
+        authController.setUser(user);
+        Get.offAllNamed(Pages.home);
+      }
     }
   }
 
@@ -71,22 +85,25 @@ class _LoginScreenState extends State<LoginScreen> {
     return BaseWrapper(
         body: Form(
       key: _formKey,
-      child: Flex(
-        direction: Axis.vertical,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // logo,
-          Text(authController.user.firstName ?? "user"),
-          Text(authController.user.lastName ?? "user"),
-          Text(authController.token == "" ? "token" : authController.token),
-          emailArea,
-          spacer(),
-          passwordArea,
-          spacer(),
-          loginButton,
-          signUpButton
-        ],
-      ),
+      child: hideLoginElements == true
+          ? Flex(
+              direction: Axis.vertical,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [Text("Hide Login Elements")],
+            )
+          : Flex(
+              direction: Axis.vertical,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // logo,
+                emailArea,
+                spacer(),
+                passwordArea,
+                spacer(),
+                loginButton,
+                signUpButton
+              ],
+            ),
     ));
   }
 
