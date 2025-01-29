@@ -47,28 +47,35 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Obx(() {
         final offers = homeController.offerList;
 
-        if (offers.isEmpty) {
-          return const EmptyOffers();
-        }
-
         return RefreshIndicator(
           onRefresh: () async {
             await homeController.getOffers();
           },
           color: const Color(0xFF2563EB),
-          child: ListView.builder(
-            itemCount: offers.length,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            itemBuilder: (context, index) {
-              final offer = offers[index];
-              return OfferCard(
-                offer: offer,
-                onTap: () {},
-              );
-            },
-          ),
+          child: offers.isEmpty
+              ? SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: SizedBox(
+                    height: MediaQuery.of(context).size.height - 100,
+                    child: const Center(
+                      child: EmptyOffers(),
+                    ),
+                  ),
+                )
+              : ListView.builder(
+                  itemCount: offers.length,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  itemBuilder: (context, index) {
+                    final offer = offers[index];
+                    return OfferCard(
+                      offer: offer,
+                      onTap: () {},
+                    );
+                  },
+                ),
         );
       }),
     );
   }
 }
+
