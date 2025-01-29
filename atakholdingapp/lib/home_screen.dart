@@ -1,6 +1,7 @@
 import 'package:atakholdingapp/controllers/auth_controller.dart';
 import 'package:atakholdingapp/controllers/home_controller.dart';
 import 'package:atakholdingapp/models/user_model.dart';
+import 'package:atakholdingapp/screens/offer_detail_screen.dart';
 import 'package:atakholdingapp/utility/singleton.dart';
 import 'package:atakholdingapp/widgets/home/empty_offers.dart';
 import 'package:atakholdingapp/widgets/home/home_app_bar.dart';
@@ -69,7 +70,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     final offer = offers[index];
                     return OfferCard(
                       offer: offer,
-                      onTap: () {},
+                      onTap: () {
+                        Get.to(() => OfferDetailScreen(offer: offer));
+                      },
                     );
                   },
                 ),

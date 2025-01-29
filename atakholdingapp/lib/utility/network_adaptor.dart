@@ -106,11 +106,11 @@ class NetworkAdaptor {
 
   //#region METHODS
   static Future<BaseResponseModel> get(String partUrl,
-      {bool withToken = false}) async {
+      {bool withToken = false, dynamic body}) async {
     try {
       var dio = _getDioWithToken();
       var url = _buildUrl(partUrl);
-      final response = await dio.get(url);
+      final response = await dio.get(url, data: body);
       return BaseResponseModel.fromMap(response.data);
     } catch (error) {
       return BaseResponseModel(success: false, message: "", data: null);
