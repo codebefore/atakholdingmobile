@@ -10,16 +10,18 @@ class OfferActionBar extends StatelessWidget {
     required this.onReject,
   }) : super(key: key);
 
-  static const List<String> _rejectReasons = [
-    'Fiyat Uygun Değil',
-    'Teslimat Süresi Uygun Değil',
-    'Ödeme Koşulları Uygun Değil',
-    'Teknik Şartlar Uygun Değil',
-    'Diğer',
-  ];
+  static const Map<String, String> _rejectReasons = {
+    'Z1': 'Fiyat Uygun Değil',
+    'Z2': 'Fiyat Uygun - Vade Problemi',
+    'Z3': 'Fiyat Uygun - Termin Sorunu',
+    'Z4': 'Fiyat Uygun - Lojistik Sorunu',
+    'Z5': 'Fiyat Uygun - Ödeme Şekli Sorunu',
+    'Z6': 'Teslimat Sonu',
+    'Z7': 'Hatalı Belge',
+  };
 
   void _showRejectDialog(BuildContext context) {
-    String selectedReason = _rejectReasons.first;
+    String selectedReasonCode = _rejectReasons.keys.first;
     final explanationController = TextEditingController();
 
     showDialog(
@@ -82,17 +84,17 @@ class OfferActionBar extends StatelessWidget {
                   ),
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: DropdownButton<String>(
-                    value: selectedReason,
+                    value: selectedReasonCode,
                     isExpanded: true,
                     underline: const SizedBox(),
                     icon: Icon(Icons.keyboard_arrow_down_rounded, color: Colors.grey.shade600),
-                    items: _rejectReasons.map((String reason) {
+                    items: _rejectReasons.entries.map((entry) {
                       return DropdownMenuItem<String>(
-                        value: reason,
+                        value: entry.key,
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                           child: Text(
-                            reason,
+                            entry.value,
                             style: const TextStyle(fontSize: 15),
                           ),
                         ),
@@ -100,31 +102,29 @@ class OfferActionBar extends StatelessWidget {
                     }).toList(),
                     onChanged: (String? value) {
                       if (value != null) {
-                        setState(() => selectedReason = value);
+                        setState(() => selectedReasonCode = value);
                       }
                     },
                   ),
                 ),
-                if (selectedReason == 'Diğer') ...[
-                  const SizedBox(height: 16),
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey.shade300),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: TextField(
-                      controller: explanationController,
-                      decoration: const InputDecoration(
-                        hintText: 'Red sebebini açıklayınız',
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(vertical: 16),
-                      ),
-                      maxLines: 3,
-                      style: const TextStyle(fontSize: 15),
-                    ),
+                const SizedBox(height: 16),
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade300),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                ],
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: TextField(
+                    controller: explanationController,
+                    decoration: const InputDecoration(
+                      hintText: 'Ek açıklama (opsiyonel)',
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(vertical: 16),
+                    ),
+                    maxLines: 3,
+                    style: const TextStyle(fontSize: 15),
+                  ),
+                ),
                 const SizedBox(height: 24),
                 Row(
                   children: [
@@ -151,11 +151,8 @@ class OfferActionBar extends StatelessWidget {
                     Expanded(
                       child: TextButton(
                         onPressed: () {
-                          final explanation = selectedReason == 'Diğer' 
-                              ? explanationController.text 
-                              : null;
                           Navigator.pop(context);
-                          onReject(selectedReason, explanation);
+                          onReject(_rejectReasons[selectedReasonCode]!, explanationController.text.isEmpty ? null : explanationController.text);
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: Colors.red.shade50,
