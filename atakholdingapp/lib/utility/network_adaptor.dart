@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:atakholdingapp/controllers/auth_controller.dart';
-import 'package:atakholdingapp/endpoints.dart';
 import 'package:atakholdingapp/models/base_response_model.dart';
 import 'package:atakholdingapp/router/pages.dart';
 import 'package:atakholdingapp/utility/singleton.dart';
@@ -79,28 +78,28 @@ class NetworkAdaptor {
     return dio;
   }
 
-  static Future<String> _userRefreshToken() async {
-    final AuthController authcontroller = g.Get.find();
-    GetStorage storage = getIt.get<GetStorage>();
-    var dio = _getDio();
-    try {
-      final response = await dio.post(
-        _buildUrl(Endpoints.refresh),
-        data: {
-          "token": authcontroller.token == ""
-              ? storage.read("token")
-              : authcontroller.token
-        },
-      );
-      final body = response.data;
-      if (body != null) {
-        return "";
-      }
-      return "";
-    } catch (exception) {
-      return "";
-    }
-  }
+  // static Future<String> _userRefreshToken() async {
+  //   final AuthController authcontroller = g.Get.find();
+  //   GetStorage storage = getIt.get<GetStorage>();
+  //   var dio = _getDio();
+  //   try {
+  //     final response = await dio.post(
+  //       _buildUrl(Endpoints.refresh),
+  //       data: {
+  //         "token": authcontroller.token == ""
+  //             ? storage.read("token")
+  //             : authcontroller.token
+  //       },
+  //     );
+  //     final body = response.data;
+  //     if (body != null) {
+  //       return "";
+  //     }
+  //     return "";
+  //   } catch (exception) {
+  //     return "";
+  //   }
+  // }
 
   //#endregion
 

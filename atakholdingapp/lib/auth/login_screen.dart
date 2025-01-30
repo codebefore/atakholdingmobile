@@ -33,14 +33,14 @@ class _LoginScreenState extends State<LoginScreen> {
   bool obsecurePassword = true;
   bool hideLoginElements = false;
   String? token = "";
-  UserModel user = new UserModel();
+  UserModel user = UserModel();
   @override
   void initState() {
     super.initState();
     token = storage.read("token");
-    if (token == null)
+    if (token == null) {
       hideLoginElements = false;
-    else {
+    } else {
       checkbio();
       hideLoginElements = true;
     }
@@ -86,7 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
         body: Form(
       key: _formKey,
       child: hideLoginElements == true
-          ? Flex(
+          ? const Flex(
               direction: Axis.vertical,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [Text("Hide Login Elements")],

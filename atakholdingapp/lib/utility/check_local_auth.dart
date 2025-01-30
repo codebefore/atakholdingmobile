@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
 
@@ -41,6 +43,7 @@ Future<bool> authenticateUser() async {
 
     return didAuthenticate;
   } on PlatformException catch (e) {
+    log(e.toString());
     return false;
   }
 }
