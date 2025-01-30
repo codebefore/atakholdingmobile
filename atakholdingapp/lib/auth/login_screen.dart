@@ -55,7 +55,15 @@ class _LoginScreenState extends State<LoginScreen> {
         authController.setToken(token ?? "");
         authController.setUser(user);
         Get.offAllNamed(Pages.home);
+      } else {
+        setState(() {
+          hideLoginElements = false;
+        });
       }
+    } else {
+      setState(() {
+        hideLoginElements = false;
+      });
     }
   }
 
@@ -86,10 +94,44 @@ class _LoginScreenState extends State<LoginScreen> {
         body: Form(
       key: _formKey,
       child: hideLoginElements == true
-          ? const Flex(
-              direction: Axis.vertical,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [Text("Hide Login Elements")],
+          ? Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColor.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.fingerprint,
+                      size: 50,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    'Hoşgeldiniz'.tr,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Giriş yapmak için biyometrik verinizi onaylayın'.tr,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                ],
+              ),
             )
           : Flex(
               direction: Axis.vertical,
@@ -101,29 +143,42 @@ class _LoginScreenState extends State<LoginScreen> {
                 passwordArea,
                 spacer(),
                 loginButton,
-                signUpButton
+                // signUpButton
               ],
             ),
     ));
   }
 
-  BaseButton get signUpButton => BaseButton(
-        text: "signup".tr,
-        onTap: () => {},
-        bgColor: Colors.transparent,
-        textColor: Theme.of(context).colorScheme.primary,
-      );
+  // BaseButton get signUpButton => BaseButton(
+  //       text: "signup".tr,
+  //       onTap: () => {},
+  //       bgColor: Colors.transparent,
+  //       textColor: Theme.of(context).colorScheme.primary,
+  //     );
 
   BaseInput get emailArea => BaseInput(
         controller: emailtextcontroller,
         focusNode: emailFocus,
         decoration: InputDecoration(
+          filled: true,
+          fillColor: Colors.white,
           border: OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(borderRadius))),
+              borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+              borderSide: BorderSide(color: Theme.of(context).primaryColor)),
+          enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+              borderSide: BorderSide(color: Theme.of(context).primaryColor)),
+          focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+              borderSide:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 2)),
           labelText: 'email'.tr,
+          labelStyle: TextStyle(color: Theme.of(context).primaryColor),
           hintText: 'enter_email'.tr,
           prefixIcon: Icon(Icons.person,
-              size: screenWidth * .005, color: Theme.of(context).primaryColor),
+              size: 24, color: Theme.of(context).primaryColor),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         ),
         keyboardType: TextInputType.emailAddress,
         textInputAction: TextInputAction.next,
@@ -142,7 +197,13 @@ class _LoginScreenState extends State<LoginScreen> {
   BaseButton get loginButton => BaseButton(
         text: "login".tr,
         onTap: validateAndSave,
-        width: screenWidth,
+        width: screenWidth * 0.9,
+        height: 50,
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 1,
+        ),
       );
 
   BaseInput get passwordArea => BaseInput(
@@ -150,35 +211,43 @@ class _LoginScreenState extends State<LoginScreen> {
         focusNode: passwordFocus,
         obsecure: obsecurePassword,
         decoration: InputDecoration(
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+              borderSide: BorderSide(color: Theme.of(context).primaryColor)),
+          enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+              borderSide: BorderSide(color: Theme.of(context).primaryColor)),
+          focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+              borderSide:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 2)),
           suffixIcon: GestureDetector(
               onTap: () {
                 setState(() {
                   obsecurePassword = !obsecurePassword;
                 });
               },
-              child: obsecurePassword == true
-                  ? Icon(
-                      Icons.visibility_off_sharp,
-                      color: Theme.of(context).primaryColor,
-                      size: screenWidth * .005,
-                    )
-                  : Icon(
-                      Icons.visibility,
-                      color: Theme.of(context).primaryColor,
-                      size: screenWidth * .005,
-                    )),
-          border: OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(borderRadius))),
+              child: Icon(
+                obsecurePassword ? Icons.visibility_off : Icons.visibility,
+                color: Theme.of(context).primaryColor,
+                size: 24,
+              )),
           labelText: "password".tr,
+          labelStyle: TextStyle(color: Theme.of(context).primaryColor),
           hintText: "enter_password".tr,
-          prefixIcon: Icon(Icons.lock,
-              size: screenWidth * .005, color: Theme.of(context).primaryColor),
+          prefixIcon:
+              Icon(Icons.lock, size: 24, color: Theme.of(context).primaryColor),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         ),
         keyboardType: TextInputType.text,
         textFormatters: const [],
         textInputAction: TextInputAction.done,
         onEditingComplete: () {
           passwordFocus.unfocus();
+          validateAndSave();
         },
         onChanged: (String value) {
           authController.loginModel.password = value;
@@ -186,13 +255,13 @@ class _LoginScreenState extends State<LoginScreen> {
         },
         validator: (value) => (value ?? '').isEmpty ? "empty_error".tr : null,
       );
-  Container get logo => Container(
-        height: screenHeight * .18,
-        width: screenWidth,
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('lib/assets/images/persanlogo.png'),
-          ),
-        ),
-      );
+  // Container get logo => Container(
+  //       height: screenHeight * .18,
+  //       width: screenWidth,
+  //       decoration: const BoxDecoration(
+  //         image: DecorationImage(
+  //           image: AssetImage('lib/assets/images/persanlogo.png'),
+  //         ),
+  //       ),
+  //     );
 }
