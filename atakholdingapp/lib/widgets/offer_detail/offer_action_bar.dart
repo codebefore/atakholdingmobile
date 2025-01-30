@@ -2,13 +2,187 @@ import 'package:flutter/material.dart';
 
 class OfferActionBar extends StatelessWidget {
   final VoidCallback onApprove;
-  final VoidCallback onReject;
+  final Function(String reason, String? explanation) onReject;
 
   const OfferActionBar({
     Key? key,
     required this.onApprove,
     required this.onReject,
   }) : super(key: key);
+
+  static const List<String> _rejectReasons = [
+    'Fiyat Uygun Değil',
+    'Teslimat Süresi Uygun Değil',
+    'Ödeme Koşulları Uygun Değil',
+    'Teknik Şartlar Uygun Değil',
+    'Diğer',
+  ];
+
+  void _showRejectDialog(BuildContext context) {
+    String selectedReason = _rejectReasons.first;
+    final explanationController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: StatefulBuilder(
+          builder: (context, setState) => Container(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.red.shade50,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(
+                        Icons.warning_rounded,
+                        color: Colors.red.shade800,
+                        size: 24,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Teklifi Reddet',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Lütfen red sebebini seçiniz',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade300),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: DropdownButton<String>(
+                    value: selectedReason,
+                    isExpanded: true,
+                    underline: const SizedBox(),
+                    icon: Icon(Icons.keyboard_arrow_down_rounded, color: Colors.grey.shade600),
+                    items: _rejectReasons.map((String reason) {
+                      return DropdownMenuItem<String>(
+                        value: reason,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Text(
+                            reason,
+                            style: const TextStyle(fontSize: 15),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (String? value) {
+                      if (value != null) {
+                        setState(() => selectedReason = value);
+                      }
+                    },
+                  ),
+                ),
+                if (selectedReason == 'Diğer') ...[
+                  const SizedBox(height: 16),
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade300),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: TextField(
+                      controller: explanationController,
+                      decoration: const InputDecoration(
+                        hintText: 'Red sebebini açıklayınız',
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(vertical: 16),
+                      ),
+                      maxLines: 3,
+                      style: const TextStyle(fontSize: 15),
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Text(
+                          'Vazgeç',
+                          style: TextStyle(
+                            color: Colors.grey.shade700,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () {
+                          final explanation = selectedReason == 'Diğer' 
+                              ? explanationController.text 
+                              : null;
+                          Navigator.pop(context);
+                          onReject(selectedReason, explanation);
+                        },
+                        style: TextButton.styleFrom(
+                          backgroundColor: Colors.red.shade50,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Text(
+                          'Reddet',
+                          style: TextStyle(
+                            color: Colors.red.shade700,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +207,7 @@ class OfferActionBar extends StatelessWidget {
                 child: Material(
                   color: Colors.transparent,
                   child: InkWell(
-                    onTap: onReject,
+                    onTap: () => _showRejectDialog(context),
                     borderRadius: BorderRadius.circular(12),
                     child: Ink(
                       decoration: BoxDecoration(

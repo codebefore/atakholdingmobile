@@ -52,7 +52,8 @@ class OfferDetailScreen extends StatelessWidget {
       ),
       bottomNavigationBar: OfferActionBar(
         onApprove: () => offerDetailController.approveOffer(offer),
-        onReject: () => offerDetailController.denyOffer(offer),
+        onReject: (reason, explanation) => 
+            offerDetailController.denyOffer(offer, reason, explanation),
       ),
     );
   }

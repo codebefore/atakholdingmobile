@@ -1,3 +1,4 @@
+import 'package:atakholdingapp/endpoints.dart';
 import 'package:atakholdingapp/models/base_response_model.dart';
 import 'package:atakholdingapp/models/offer_model.dart';
 import 'package:atakholdingapp/utility/network_adaptor.dart';
@@ -6,15 +7,13 @@ import 'package:get/get.dart';
 class OfferDetailController extends GetxController {
   Future<void> approveOffer(OfferModel offer) async {
     try {
-      final response = await NetworkAdaptor.get(
-        '/approve',
+      BaseResponseModel response = await NetworkAdaptor.get(
+        Endpoints.approve,
         withToken: true,
         body: offer.toJson(),
       );
 
-      final baseResponse = BaseResponseModel.fromMap(response.data);
-
-      if (baseResponse.success == true) {
+      if (response.success == true) {
         Get.back(result: true);
         Get.snackbar(
           'Başarılı',
@@ -24,7 +23,7 @@ class OfferDetailController extends GetxController {
       } else {
         Get.snackbar(
           'Hata',
-          baseResponse.message ?? 'Bir hata oluştu',
+          response.message ?? 'Bir hata oluştu',
           snackPosition: SnackPosition.TOP,
         );
       }
@@ -37,17 +36,21 @@ class OfferDetailController extends GetxController {
     }
   }
 
-  Future<void> denyOffer(OfferModel offer) async {
+  Future<void> denyOffer(
+      OfferModel offer, String reason, String? explanation) async {
     try {
-      final response = await NetworkAdaptor.get(
-        '/deny',
-        withToken: true,
-        body: offer.toJson(),
+      final updatedOffer = offer.copyWith(
+        refuseReason: reason,
+        refuseExplanation: explanation,
       );
 
-      final baseResponse = BaseResponseModel.fromMap(response.data);
+      BaseResponseModel response = await NetworkAdaptor.get(
+        Endpoints.deny,
+        withToken: true,
+        body: updatedOffer.toJson(),
+      );
 
-      if (baseResponse.success == true) {
+      if (response.success == true) {
         Get.back(result: true);
         Get.snackbar(
           'Başarılı',
@@ -57,7 +60,7 @@ class OfferDetailController extends GetxController {
       } else {
         Get.snackbar(
           'Hata',
-          baseResponse.message ?? 'Bir hata oluştu',
+          response.message ?? 'Bir hata oluştu',
           snackPosition: SnackPosition.TOP,
         );
       }
