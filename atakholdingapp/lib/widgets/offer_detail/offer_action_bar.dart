@@ -87,7 +87,8 @@ class OfferActionBar extends StatelessWidget {
                     value: selectedReasonCode,
                     isExpanded: true,
                     underline: const SizedBox(),
-                    icon: Icon(Icons.keyboard_arrow_down_rounded, color: Colors.grey.shade600),
+                    icon: Icon(Icons.keyboard_arrow_down_rounded,
+                        color: Colors.grey.shade600),
                     items: _rejectReasons.entries.map((entry) {
                       return DropdownMenuItem<String>(
                         value: entry.key,
@@ -152,7 +153,11 @@ class OfferActionBar extends StatelessWidget {
                       child: TextButton(
                         onPressed: () {
                           Navigator.pop(context);
-                          onReject(_rejectReasons[selectedReasonCode]!, explanationController.text.isEmpty ? null : explanationController.text);
+                          onReject(
+                              selectedReasonCode,
+                              explanationController.text.isEmpty
+                                  ? null
+                                  : explanationController.text);
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: Colors.red.shade50,
@@ -319,4 +324,4 @@ class OfferActionBar extends StatelessWidget {
       ),
     );
   }
-} 
+}
