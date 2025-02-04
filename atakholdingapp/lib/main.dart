@@ -40,6 +40,7 @@ class MyApp extends StatelessWidget {
           }
         },
         child: GetMaterialApp(
+          initialBinding: StoreBinding(),
           getPages: routes,
           translations: Translator(),
           locale: Get.deviceLocale,

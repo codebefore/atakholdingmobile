@@ -1,3 +1,4 @@
+import 'package:atakholdingapp/controllers/home_controller.dart';
 import 'package:atakholdingapp/endpoints.dart';
 import 'package:atakholdingapp/models/base_response_model.dart';
 import 'package:atakholdingapp/models/offer_model.dart';
@@ -33,6 +34,9 @@ class OfferDetailController extends GetxController {
         'Teklif onaylanırken bir hata oluştu',
         snackPosition: SnackPosition.TOP,
       );
+    } finally {
+      final HomeController homeController = Get.find();
+      homeController.getOffers();
     }
   }
 
@@ -70,6 +74,9 @@ class OfferDetailController extends GetxController {
         'Teklif reddedilirken bir hata oluştu',
         snackPosition: SnackPosition.TOP,
       );
+    } finally {
+      final HomeController homeController = Get.find();
+      homeController.getOffers();
     }
   }
 }

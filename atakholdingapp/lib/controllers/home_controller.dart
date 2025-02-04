@@ -7,11 +7,19 @@ import 'package:atakholdingapp/utility/network_adaptor.dart';
 import 'package:get/get.dart';
 
 class HomeController extends GetxController {
+  @override
+  void onReady() {
+    // TODO: implement onReady
+    super.onReady();
+    getOffers();
+  }
+
   // offerList
   final RxList<OfferModel> _offerList = <OfferModel>[].obs;
   List<OfferModel> get offerList => _offerList;
   void setOfferList(List<OfferModel> offers) {
     _offerList.value = offers;
+    update();
   }
 
   // Offer list

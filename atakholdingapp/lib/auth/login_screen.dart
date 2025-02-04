@@ -137,7 +137,7 @@ class _LoginScreenState extends State<LoginScreen> {
               direction: Axis.vertical,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // logo,
+                logo,
                 emailArea,
                 spacer(),
                 passwordArea,
@@ -255,13 +255,13 @@ class _LoginScreenState extends State<LoginScreen> {
         },
         validator: (value) => (value ?? '').isEmpty ? "empty_error".tr : null,
       );
-  // Container get logo => Container(
-  //       height: screenHeight * .18,
-  //       width: screenWidth,
-  //       decoration: const BoxDecoration(
-  //         image: DecorationImage(
-  //           image: AssetImage('lib/assets/images/persanlogo.png'),
-  //         ),
-  //       ),
-  //     );
+  Container get logo => Container(
+        height: screenHeight * .22,
+        width: screenWidth,
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('lib/assets/images/logo.png'),
+          ),
+        ),
+      );
 }

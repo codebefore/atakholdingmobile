@@ -7,7 +7,6 @@ import 'package:get/get.dart';
 class HomeDrawer extends StatelessWidget {
   final UserModel user;
   final AuthController authController;
-
   const HomeDrawer({
     super.key,
     required this.user,
@@ -16,21 +15,22 @@ class HomeDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Color bgColor = Theme.of(context).colorScheme.primary;
     return Drawer(
       child: Column(
         children: [
           UserAccountsDrawerHeader(
-            decoration: const BoxDecoration(
-              color: Color(0xFF2563EB),
+            decoration: BoxDecoration(
+              color: bgColor,
             ),
             currentAccountPicture: CircleAvatar(
               backgroundColor: Colors.white,
               child: Text(
                 user.firstName?.substring(0, 1).toUpperCase() ?? 'A',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF2563EB),
+                  color: bgColor,
                 ),
               ),
             ),

@@ -23,7 +23,6 @@ class _HomeScreenState extends State<HomeScreen> {
   UserModel user = UserModel();
   GetStorage storage = getIt.get<GetStorage>();
   final authController = Get.find<AuthController>();
-  final homeController = Get.find<HomeController>();
 
   @override
   void initState() {
@@ -32,8 +31,6 @@ class _HomeScreenState extends State<HomeScreen> {
     user = UserModel.fromJson(storage.read("user"));
     authController.setToken(token ?? "");
     authController.setUser(user);
-
-    homeController.getOffers();
   }
 
   @override
@@ -45,12 +42,12 @@ class _HomeScreenState extends State<HomeScreen> {
         user: user,
         authController: authController,
       ),
-      body: Obx(() {
-        final offers = homeController.offerList;
+      body: GetBuilder<HomeController>(builder: (controller) {
+        final offers = controller.offerList;
 
         return RefreshIndicator(
           onRefresh: () async {
-            await homeController.getOffers();
+            await controller.getOffers();
           },
           color: const Color(0xFF2563EB),
           child: offers.isEmpty
@@ -65,7 +62,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 )
               : ListView.builder(
                   itemCount: offers.length,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   itemBuilder: (context, index) {
                     final offer = offers[index];
                     return OfferCard(
@@ -81,4 +79,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
