@@ -12,7 +12,8 @@ class NetworkAdaptor {
   //#region PRIVATE
   static String _buildUrl(String partUrl) {
     if (partUrl.startsWith('https')) return partUrl;
-    return "http://195.33.210.90:9611$partUrl";
+    // return "http://195.33.210.90:9611$partUrl";
+    return "http://95.70.198.214:9611$partUrl";
   }
 
   static Dio _getDio({bool withToken = false}) {

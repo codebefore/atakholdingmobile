@@ -23,6 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   UserModel user = UserModel();
   GetStorage storage = getIt.get<GetStorage>();
   final authController = Get.find<AuthController>();
+  final homeController = Get.find<HomeController>();
 
   @override
   void initState() {
@@ -31,6 +32,9 @@ class _HomeScreenState extends State<HomeScreen> {
     user = UserModel.fromJson(storage.read("user"));
     authController.setToken(token ?? "");
     authController.setUser(user);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await homeController.getOffers();
+    });
   }
 
   @override
@@ -42,15 +46,13 @@ class _HomeScreenState extends State<HomeScreen> {
         user: user,
         authController: authController,
       ),
-      body: GetBuilder<HomeController>(builder: (controller) {
-        final offers = controller.offerList;
-
-        return RefreshIndicator(
+      body: Obx(
+        () => RefreshIndicator(
           onRefresh: () async {
-            await controller.getOffers();
+            await homeController.getOffers();
           },
           color: const Color(0xFF2563EB),
-          child: offers.isEmpty
+          child: homeController.offerList.isEmpty
               ? SingleChildScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
                   child: SizedBox(
@@ -61,11 +63,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 )
               : ListView.builder(
-                  itemCount: offers.length,
+                  itemCount: homeController.offerList.length,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   itemBuilder: (context, index) {
-                    final offer = offers[index];
+                    final offer = homeController.offerList[index];
                     return OfferCard(
                       offer: offer,
                       onTap: () {
@@ -74,8 +76,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   },
                 ),
-        );
-      }),
+        ),
+      ),
     );
   }
 }

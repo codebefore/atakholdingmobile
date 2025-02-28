@@ -46,7 +46,7 @@ class AuthController extends GetxController {
   //send request login
   Future<bool> login() async {
     BaseResponseModel response = await NetworkAdaptor.post(
-        '${Endpoints.login}?username=${loginModel.email}&password=${loginModel.password}');
+        '${Endpoints.login}?username=${loginModel.email ?? ""}&password=${loginModel.password}');
     if (response.success == true) {
       var responsemodel = LoginResponseModel.fromMap(response.data);
       setToken(responsemodel.token ?? "");
