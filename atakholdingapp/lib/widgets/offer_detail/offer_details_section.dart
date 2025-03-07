@@ -86,7 +86,7 @@ class OfferDetailsSection extends StatelessWidget {
               ),
               _buildDetailItem(
                 icon: Icons.event,
-                title: 'Geçerlilik',
+                title: 'Vade Tarihi',
                 value: offer.validityDate != null
                     ? DateFormat('dd.MM.yyyy').format(offer.validityDate!)
                     : '-',
@@ -151,4 +151,4 @@ class OfferDetailsSection extends StatelessWidget {
       ),
     );
   }
-} 
+}
